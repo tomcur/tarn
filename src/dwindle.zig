@@ -77,7 +77,7 @@ const DwindleAxis = enum {
 var view_padding: u31 = 6;
 var outer_padding: u31 = 6;
 var default_horizontal_ratio: f64 = 0.5;
-var default_vertical_ratio: f64 = 0.6;
+var default_vertical_ratio: f64 = 0.5;
 
 /// We don't free resources on exit, only when output globals are removed.
 const gpa = std.heap.c_allocator;
