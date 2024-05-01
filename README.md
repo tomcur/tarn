@@ -1,6 +1,7 @@
 # Tarn
 
-Tarn is a collection of River layout generators (currently N=1).
+Tarn is a collection of [River](https://codeberg.org/river/river) layout
+generators (currently N=1).
 
 ## Included layouts
 
