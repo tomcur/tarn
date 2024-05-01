@@ -56,10 +56,8 @@ const usage =
     \\  -view-padding      Set the padding around views in pixels. (Default 6)
     \\  -outer-padding     Set the padding around the edge of the layout area in
     \\                     pixels. (Default 6)
-    \\  -horizontal-ratio  Set the initial number of views in the main area of the
-    \\                     layout. (Default 1)
-    \\  -vertical-ratio    Set the initial ratio of main area to total layout
-    \\                     area. (Default: 0.6)
+    \\  -horizontal-ratio  Set the dwindle ratio for horizontal splits (Default 0.5)
+    \\  -vertical-ratio    Set the dwindle ratio for vertical splits (Default: 0.5)
     \\
 ;
 
