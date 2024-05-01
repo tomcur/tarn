@@ -12,7 +12,7 @@ Tarn is a collection of River layout generators (currently N=1).
 Using Nix
 
 ```bash
-$ nix build https://codeberg.org/tomcur/tarn#tarn
+$ nix build git+https://codeberg.org/tomcur/tarn.git
 ```
 
 ## Usage
