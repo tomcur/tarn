@@ -25,6 +25,7 @@
             pkg-config
             wayland
             wayland-protocols
+            wayland-scanner
           ];
         };
         packages.default = packages.tarn;
@@ -35,6 +36,7 @@
             pkg-config
             wayland
             wayland-protocols
+            wayland-scanner
           ];
           shellHook = ''
           '';
