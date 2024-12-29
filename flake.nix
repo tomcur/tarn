@@ -14,21 +14,28 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       rec {
-        packages.tarn = pkgs.stdenv.mkDerivation {
+        packages.tarn = pkgs.stdenv.mkDerivation (finalAttrs: {
           pname = "tarn";
           version = "0.1.0";
 
           src = ./.;
 
+          deps = pkgs.callPackage ./deps.nix { };
           nativeBuildInputs = with pkgs; [
-            zig_0_11.hook
-
             pkg-config
+
             wayland
             wayland-protocols
             wayland-scanner
+
+            zig_0_13.hook
           ];
-        };
+          dontConfigure = true;
+          zigBuildFlags = [
+            "--system"
+            "${finalAttrs.deps}"
+          ];
+        });
         packages.default = packages.tarn;
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [

@@ -1,6 +1,6 @@
 const std = @import("std");
 
-const Scanner = @import("deps/zig-wayland/build.zig").Scanner;
+const Scanner = @import("zig-wayland").Scanner;
 
 const version = "0.1.0";
 
@@ -16,11 +16,11 @@ pub fn build(b: *std.Build) void {
 
     const scanner = Scanner.create(b, .{});
 
-    const wayland = b.createModule(.{ .source_file = scanner.result });
+    const wayland = b.createModule(.{ .root_source_file = scanner.result });
 
     scanner.addSystemProtocol("stable/xdg-shell/xdg-shell.xml");
     scanner.addSystemProtocol("staging/ext-session-lock/ext-session-lock-v1.xml");
-    scanner.addCustomProtocol("protocol/river-layout-v3.xml");
+    scanner.addCustomProtocol(b.path("protocol/river-layout-v3.xml"));
 
     scanner.generate("wl_seat", 4);
     scanner.generate("wl_output", 4);
@@ -30,24 +30,21 @@ pub fn build(b: *std.Build) void {
     scanner.generate("xdg_wm_base", 3);
     scanner.generate("ext_session_lock_manager_v1", 1);
 
-    const flags = b.createModule(.{ .source_file = .{ .path = "common/flags.zig" } });
+    const flags = b.createModule(.{ .root_source_file = b.path("common/flags.zig") });
 
     {
         const exe = b.addExecutable(.{
             .name = "tarn-dwindle",
-            .root_source_file = .{ .path = "src/dwindle.zig" },
+            .root_source_file = b.path("src/dwindle.zig"),
             .target = target,
             .optimize = optimize,
         });
-        exe.addOptions("build_options", options);
+        exe.root_module.addOptions("build_options", options);
 
-        exe.addModule("flags", flags);
-        exe.addModule("wayland", wayland);
+        exe.root_module.addImport("flags", flags);
+        exe.root_module.addImport("wayland", wayland);
         exe.linkLibC();
         exe.linkSystemLibrary("wayland-client");
-
-        // TODO: remove when https://github.com/ziglang/zig/issues/131 is implemented
-        scanner.addCSource(exe);
 
         b.installArtifact(exe);
 

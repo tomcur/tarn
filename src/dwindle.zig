@@ -181,8 +181,8 @@ const Output = struct {
                 const usable_width = saturatingCast(u31, ev.usable_width) -| (2 *| outer_padding);
                 const usable_height = saturatingCast(u31, ev.usable_height) -| (2 *| outer_padding);
 
-                var horizontal_ratio: u31 = @intFromFloat(output.horizontal_ratio * 100);
-                var vertical_ratio: u31 = @intFromFloat(output.vertical_ratio * 100);
+                const horizontal_ratio: u31 = @intFromFloat(output.horizontal_ratio * 100);
+                const vertical_ratio: u31 = @intFromFloat(output.vertical_ratio * 100);
 
                 var xmin: u31 = 0;
                 var ymin: u31 = 0;
@@ -245,17 +245,17 @@ pub fn main() !void {
         .{ .name = "vertical-ratio", .kind = .arg },
     }).parse(os.argv[1..]) catch {
         try std.io.getStdErr().writeAll(usage);
-        os.exit(1);
+        std.process.exit(1);
     };
     if (result.flags.h) {
         try std.io.getStdOut().writeAll(usage);
-        os.exit(0);
+        std.process.exit(0);
     }
     if (result.args.len != 0) fatalPrintUsage("unknown option '{s}'", .{result.args[0]});
 
     if (result.flags.version) {
         try std.io.getStdOut().writeAll(@import("build_options").version ++ "\n");
-        os.exit(0);
+        std.process.exit(0);
     }
     if (result.flags.@"view-padding") |raw| {
         view_padding = fmt.parseUnsigned(u31, raw, 10) catch
@@ -284,7 +284,7 @@ pub fn main() !void {
 
     const display = wl.Display.connect(null) catch {
         std.debug.print("Unable to connect to Wayland server.\n", .{});
-        os.exit(1);
+        std.process.exit(1);
     };
     defer display.disconnect();
 
@@ -314,9 +314,9 @@ pub fn main() !void {
 fn registryListener(registry: *wl.Registry, event: wl.Registry.Event, context: *Context) void {
     switch (event) {
         .global => |global| {
-            if (mem.orderZ(u8, global.interface, river.LayoutManagerV3.getInterface().name) == .eq) {
+            if (mem.orderZ(u8, global.interface, river.LayoutManagerV3.interface.name) == .eq) {
                 context.layout_manager = registry.bind(global.name, river.LayoutManagerV3, 1) catch return;
-            } else if (mem.orderZ(u8, global.interface, wl.Output.getInterface().name) == .eq) {
+            } else if (mem.orderZ(u8, global.interface, wl.Output.interface.name) == .eq) {
                 context.addOutput(registry, global.name) catch |err| fatal("failed to bind output: {}", .{err});
             }
         },
@@ -337,13 +337,13 @@ fn registryListener(registry: *wl.Registry, event: wl.Registry.Event, context: *
 
 fn fatal(comptime format: []const u8, args: anytype) noreturn {
     std.log.err(format, args);
-    os.exit(1);
+    std.process.exit(1);
 }
 
 fn fatalPrintUsage(comptime format: []const u8, args: anytype) noreturn {
     std.log.err(format, args);
     std.io.getStdErr().writeAll(usage) catch {};
-    os.exit(1);
+    std.process.exit(1);
 }
 
 fn saturatingCast(comptime T: type, x: anytype) T {
